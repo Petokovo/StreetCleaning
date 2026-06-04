@@ -15,7 +15,7 @@ namespace StreetCleaning.Repositories
         /// User filter: From/To dates, Type, EIC, ConsumptionPointNumber, City, Street,
         /// paging fields (SelectedAmount/NoMoreResults).
         /// </param>
-        List<DataNotifyDto> SearchByFilter(IndexFormViewModel plnOdsFormViewModel);
+        List<DataNotifyDto> SearchByFilter(IndexFormViewModel notifyFormViewModel);
 
     }
 }
