@@ -1,7 +1,13 @@
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Serilog.Events;
+using StreetCleaning.Data;
+using StreetCleaning.Data.Interceptors;
+using StreetCleaning.Repositories;
+using StreetCleaning.Services;
+using StreetCleaning.Services.Interfaces;
 using System.IO.Compression;
 using System.Threading.RateLimiting;
 
@@ -56,11 +62,11 @@ namespace StreetCleaning
 
                 builder.Host.UseSerilog(Log.Logger, dispose: true);
 
-                builder.Services.AddScoped<IPlnOdsNotifyRepository, PlnOdsNotifyRepository>();
-                builder.Services.AddScoped<IPlnOdsService, PlnOdsService>();
+                builder.Services.AddScoped<INotifyRepository, NotifyRepository>();
+                builder.Services.AddScoped<INotifyService, NotifyService>();
                 builder.Services.AddSingleton<IAppVersionService, AppVersionService>();
 
-                builder.Services.AddDbContext<PlnOdsDbContext>(options =>
+                builder.Services.AddDbContext<ModelDbContext>(options =>
                     options.UseOracle(builder.Configuration.GetConnectionString("DbConnectionString"))
                     .AddInterceptors(new OracleNlsInterceptor())
                     .AddInterceptors(new OracleFetchTuningInterceptor()));
