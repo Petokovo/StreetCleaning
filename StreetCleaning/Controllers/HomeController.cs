@@ -1,32 +1,93 @@
-using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using StreetCleaning.Models;
+using StreetCleaning.Services.Interfaces;
+using StreetCleaning.ViewModels;
+using System.Diagnostics;
 
 namespace StreetCleaning.Controllers
 {
+    [EnableRateLimiting("PerIpBurstPolicy")]
     public class HomeController : Controller
     {
+        private readonly INotifyService _notifyService;
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(INotifyService notifyService, ILogger<HomeController> logger)
         {
+            _notifyService = notifyService;
             _logger = logger;
         }
-
-        public IActionResult Index()
+        [HttpGet]
+        public IActionResult Index(IndexPageViewModel indexPageViewModel)
         {
-            return View();
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    if (indexPageViewModel.Filter.TryValidateTo(ModelState))
+                    {
+                        return View(_notifyService.FilterByNotifyFormViewModel(indexPageViewModel.Filter));
+                    }
+
+                    return View(new IndexPageViewModel { Filter = indexPageViewModel.Filter, Results = new List<IndexResultViewModel>() });
+                }
+
+                IndexFormViewModel indexFormViewModel = new IndexFormViewModel
+                {
+                    Type = Enums.NotifyType.Planned,
+                    From = DateTime.Today,
+                    To = DateTime.Today
+                };
+                return View(new IndexPageViewModel { Filter = indexFormViewModel, Results = new List<IndexResultViewModel>() });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while processing the Index action.");
+
+                IndexFormViewModel indexFormViewModel = new IndexFormViewModel
+                {
+                    Type = Enums.NotifyType.Planned,
+                    From = DateTime.Today,
+                    To = DateTime.Today
+                };
+                return View(new IndexPageViewModel { Filter = indexFormViewModel, Results = new List<IndexResultViewModel>() });
+            }
         }
 
-        public IActionResult Privacy()
+        [HttpGet("/rows")]
+        public IActionResult ResultsRows(IndexPageViewModel indexPageViewModel)
         {
-            return View();
-        }
+            try
+            {
+                var ms = new Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary();
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+                if (indexPageViewModel.Filter == null)
+                {
+                    return NoContent(); // 204
+                }
+
+                if (indexPageViewModel.Filter.TryValidateTo(ms))
+                {
+                    var result = _notifyService.FilterByNotifyFormViewModel(indexPageViewModel.Filter);
+
+                    if (result.Results == null || result.Results.Count == 0)
+                    {
+                        return NoContent(); // 204
+                    }
+
+                    Response.Headers["NoMoreResults"] = result.Filter.NoMoreResults;
+
+                    return PartialView("_ResultTable", result);
+                }
+
+                return NoContent(); // 204
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while processing the ResultsRows action.");
+                return NoContent(); // 204
+            }
         }
     }
 }

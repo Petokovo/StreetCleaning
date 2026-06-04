@@ -1,22 +1,167 @@
-html {
-  font-size: 14px;
+.border-top { /* adds a light grey top border */
+    border-top: 1px solid #e5e5e5;
 }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+.border-bottom { /* adds a light grey bottom border */
+    border-bottom: 1px solid #e5e5e5;
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+.box-shadow { /* small shadow effect for boxes */
+    box-shadow: 0 .25rem .75rem rgba(0,0,0,.05);
 }
 
-html {
-  position: relative;
-  min-height: 100%;
+/* Fix vertical alignment inside tables */
+.table.align-middle > :not(caption) > * > * {
+    vertical-align: middle; /* makes table cell text vertically centered */
 }
 
-body {
-  margin-bottom: 60px;
+/* Global CSS variables */
+:root {
+    --po-burgundy: #a10d2e; /* main burgundy color – used for the "Search" button */
+    --po-grey: #d9d9db; /* light grey – background of the filter panel */
+    --po-grey-border: #bfc0c2; /* grey – borders of inputs, tables, panels */
+    --po-footer: #343a40; /* dark grey – footer background */
+    --bs-body-bg: #f4f4f4; /* override Bootstrap body background */
+    --bs-body-color: #212529; /* override Bootstrap default text color */
+    --bs-card-bg: #ffffff; /* override Bootstrap card background */
+    --bs-card-border-color: #bfc0c2; /* override Bootstrap card border color */
 }
+
+.po-bg {
+    background: #f4f4f4 !important; /* force light grey page background */
+}
+
+/* Force light background for forms and cards (ignores dark mode) */
+.card, .form-control, .form-select {
+    background-color: #fff !important;
+}
+
+.po-header {
+    background: #fff; /* white background for header */
+}
+
+.po-logo {
+    height: 90px; /* logo height (desktop) */
+    width: auto; /* keep aspect ratio */
+}
+
+.po-title {
+    font-weight: 600; /* bold title */
+    letter-spacing: 1px; /* slight spacing between letters */
+    font-size: 1.75rem; /* default font size for title */
+}
+
+/* Filter panel styling */
+.po-filter {
+    background: var(--po-grey); /* light grey background */
+    border: 1px solid var(--po-grey-border);
+    box-shadow: 0 2px 6px rgba(0,0,0,.05); /* subtle shadow */
+}
+
+    .po-filter .form-control,
+    .po-filter .form-select {
+        border-color: var(--po-grey-border); /* grey borders for inputs */
+        background: #fff; /* white input background */
+    }
+
+    .po-filter .form-label {
+        font-weight: 600; /* bold labels */
+    }
+
+/* Search button */
+.po-btn {
+    background: var(--po-burgundy); /* burgundy background */
+    color: #fff; /* white text */
+    font-weight: 600;
+    border: 1px solid var(--po-burgundy);
+}
+
+    .po-btn:hover {
+        filter: brightness(0.95); /* slightly darker on hover */
+        color: #fff;
+    }
+
+    /* Disable stav */
+    .po-btn:disabled {
+        opacity: .95;
+        cursor: not-allowed;
+    }
+
+.spinner-border {
+    width: 1rem;
+    height: 1rem;
+    border-width: 2px;
+}
+
+/* Results table */
+.table {
+    border-color: var(--po-grey-border); /* light grey borders */
+}
+
+/* Footer styling */
+.po-footer {
+    background: var(--po-footer); /* dark grey footer background */
+}
+
+.po-footer p {
+    opacity: .9; /* slightly lighter footer text */
+}
+
+.po-footer a {
+    color: #a10d2e; /* red footer link */
+}
+
+/* Mobile adjustments (small screens) */
+@media (max-width: 575.98px) { /* xs */
+    .po-logo {
+        height: 60px; /* smaller logo */
+    }
+
+    .po-title {
+        font-size: 1.4rem; /* smaller title font size */
+    }
+
+    .container {
+        padding-left: 1rem; /* reduce side padding */
+        padding-right: 1rem;
+    }
+}
+
+/* Large desktop adjustments */
+@media (min-width: 1200px) { /* xl */
+    .po-title {
+        font-size: 2rem; /* bigger title font */
+    }
+}
+
+/* PDF link */
+.po-footer a.footer-pdf-link {
+    color: #bbb !important;
+}
+
+.footer-download {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.footer-download i {
+    color: #bbb;
+    font-size: 1rem;
+}
+
+.footer-pdf-link {
+    text-decoration: underline;
+    transition: color .2s;
+}
+
+.footer-pdf-link:hover {
+    color: #fff !important;
+    text-decoration: none;
+}
+
+.po-footer .bi-file-earmark-pdf {
+    color: #bbb;
+}
+/* PDF link */

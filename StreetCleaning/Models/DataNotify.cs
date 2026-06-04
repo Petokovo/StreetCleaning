@@ -8,13 +8,7 @@
         /// </summary>
         public int Com { get; set; }
 
-        public string? KategOm { get; set; }
-
-        public string? Okres { get; set; }
-
         public string? Obec { get; set; }
-
-        public string? CastObce { get; set; }
 
         public string? Ulica { get; set; }
 

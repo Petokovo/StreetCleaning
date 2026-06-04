@@ -2,15 +2,15 @@
 
 namespace StreetCleaning.Enums
 {
-    public enum NotifyType//complete
+    public enum NotifyType
     {
-        [Display(Name = "Plánované odstávky")]
+        [Display(Name = "Plánované upratovanie")]
         Planned = 1,
 
-        [Display(Name = "Storno plánovanej odstávky")]
+        [Display(Name = "Storno plánovaného upratovania")]
         Cancelled = 2,
 
-        [Display(Name = "Skutočné časy zrealizovaných plánovaných odstávok")]
+        [Display(Name = "Skutočné časy zrealizovaných plánovaných upratovaní")]
         Actual = 3
     }
 }

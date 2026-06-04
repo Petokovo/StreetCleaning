@@ -8,12 +8,12 @@
 
             <!-- Line 1: Od, Do, Typ -->
             <div class="row g-3 align-items-end">
-                <div class="col-12 col-md-6 col-xl-4">
+                <div class="col-12 col-md-6 col-xl-4"> 
                     <label asp-for="Filter.From" class="form-label">
                         Od
                         <i class="bi bi-info-circle ms-1 text-muted"
                            data-bs-toggle="tooltip"
-                           title="Vyberte dátum začiatku vyhľadávania plánovaných odstávok"></i>
+                           title="Vyberte dátum začiatku vyhľadávania plánovaných upratovaní"></i>
                     </label>
                     <input asp-for="Filter.From" class="form-control" placeholder="DD.MM.YYYY" />
                     <span asp-validation-for="Filter.From" class="text-danger"></span>
@@ -24,7 +24,7 @@
                         Do
                         <i class="bi bi-info-circle ms-1 text-muted"
                            data-bs-toggle="tooltip"
-                           title="Vyberte dátum konca vyhľadávania plánovaných odstávok"></i>
+                           title="Vyberte dátum konca vyhľadávania plánovaných upratovaní"></i>
                     </label>
                     <input asp-for="Filter.To" class="form-control" placeholder="DD.MM.YYYY" />
                     <span asp-validation-for="Filter.To" class="text-danger"></span>
@@ -35,9 +35,9 @@
                         Typ
                         <i class="bi bi-info-circle ms-1 text-muted"
                            data-bs-toggle="tooltip"
-                           title="Zvoľte, či chcete zobraziť plánované odstávky, storno alebo skutočné časy"></i>
+                           title="Zvoľte, či chcete zobraziť plánované upratovanie, storno alebo skutočné časy"></i>
                     </label>
-                    <select asp-for="Filter.Type" asp-items="Html.GetEnumSelectList<PlnOdsType>()" class="form-select"></select>
+                    <select asp-for="Filter.Type" asp-items="Html.GetEnumSelectList<NotifyType>()" class="form-select"></select>
                     <span asp-validation-for="Filter.Type" class="text-danger"></span>
                 </div>
             </div>
@@ -110,7 +110,7 @@
                         <th scope="col">Obec</th>
                         <th scope="col">Ulica</th>
 
-                        @if (Model.Filter.Type == PlnOdsType.Cancelled)
+                        @if (Model.Filter.Type == NotifyType.Cancelled)
                         {
                             <th scope="col">Dátum stornovania</th>
                         }
@@ -143,18 +143,19 @@
     {
         // intro text for default view
         <div class="alert alert-info mt-3">
-            <h5>Vážení zákazníci,</h5>
+            <h5>Vážení občania,</h5>
             <p>
-                Táto aplikácia vám umožňuje jednoducho overiť <strong>plánovanú odstávku elektriny</strong> pre vaše odberné miesto alebo obec.
+                Táto aplikácia vám umožňuje jednoducho overiť <strong>plánované upratovanie ulíc</strong> vo vašej obci alebo na konkrétnej ulici.
             </p>
             <ul>
-                <li>zobrazenie termínov plánovaných odstávok,</li>
-                <li>informácie o zrušení plánovaných odstávok,</li>
-                <li>skutočné časy priebehu už zrealizovaných odstávok.</li>
+                <li>zobrazenie termínov plánovaných upratovaní,</li>
+                <li>informácie o zrušení plánovaných upratovaní,</li>
+                <li>informácie o už zrealizovaných upratovaniach.</li>
             </ul>
             <p>
                 Pre vyhľadanie zadajte aspoň jeden z údajov: <strong>EIC kód, číslo odberného miesta, obec alebo ulicu</strong>.
-                Následne si zvoľte typ informácie (plánované odstávky, storno alebo skutočné časy) a určite časový interval v poliach <strong>Od – Do</strong>.
+                Následne si zvoľte typ informácie (plánované upratovanie, zrušené upratovanie alebo realizované upratovanie)
+                a určite časový interval v poliach <strong>Od – Do</strong>.
             </p>
             <p class="mb-0">
                 Kliknutím na tlačidlo <strong>Vyhľadať</strong> sa zobrazia výsledky podľa zadaných kritérií.

@@ -9,7 +9,7 @@
             <td>@item.City</td>
             <td>@item.Street</td>
 
-            @if (Model.Filter.Type == PlnOdsType.Cancelled)
+            @if (Model.Filter.Type == NotifyType.Cancelled)
             {
                 <td>@(item.Cancelled?.ToString("dd.MM.yyyy HH:mm") ?? "-")</td>
             }
