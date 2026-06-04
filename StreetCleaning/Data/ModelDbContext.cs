@@ -1,39 +1,36 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using StreetCleaning.Models;
 
 namespace StreetCleaning.Data
 {
     public partial class ModelDbContext : DbContext
     {
-        private readonly string _plnOdsObject;
+        private readonly string _notifyObject;
 
-        public PlnOdsDbContext(DbContextOptions<PlnOdsDbContext> options, IConfiguration cfg)
+        public ModelDbContext(DbContextOptions<ModelDbContext> options, IConfiguration cfg)
             : base(options)
         {
-            // Get the Oracle object name from configuration, default to "PLN_ODS_NOTIFY" if not set
-            _plnOdsObject = cfg["Oracle:PlnOdsObject"] ?? "PLN_ODS_NOTIFY";
+            // Get the Oracle object name from configuration
+            _notifyObject = cfg["Oracle:NotifyObject"] ?? "NOTIFY";
         }
 
-        public virtual DbSet<PlnOdsNotify> PlnOdsNotifies { get; set; }
+        public virtual DbSet<DataNotify> DataNotifies { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .UseCollation("USING_NLS_COMP");
 
-            modelBuilder.Entity<PlnOdsNotify>(entity =>
+            modelBuilder.Entity<DataNotify>(entity =>
             {
                 entity
                     .HasNoKey()
-                    .ToTable(_plnOdsObject); // Use the configured Oracle object name
+                    .ToTable(_notifyObject); // Use the configured Oracle object name
 
                 entity.Property(e => e.CDomu)
                     .HasMaxLength(16)
                     .IsUnicode(false)
                     .HasColumnName("C_DOMU");
-                entity.Property(e => e.CastObce)
-                    .HasMaxLength(30)
-                    .IsUnicode(false)
-                    .HasColumnName("CAST_OBCE");
                 entity.Property(e => e.Com)
                     .HasPrecision(8)
                     .HasColumnName("COM");
@@ -41,22 +38,10 @@ namespace StreetCleaning.Data
                     .HasMaxLength(16)
                     .IsUnicode(false)
                     .HasColumnName("EIC");
-                entity.Property(e => e.KategOm)
-                    .HasMaxLength(5)
-                    .IsUnicode(false)
-                    .HasColumnName("KATEG_OM");
-                entity.Property(e => e.Name)
-                    .HasMaxLength(10)
-                    .IsUnicode(false)
-                    .HasColumnName("NAME");
                 entity.Property(e => e.Obec)
                     .HasMaxLength(30)
                     .IsUnicode(false)
                     .HasColumnName("OBEC");
-                entity.Property(e => e.Okres)
-                    .HasMaxLength(30)
-                    .IsUnicode(false)
-                    .HasColumnName("OKRES");
                 entity.Property(e => e.PlanDo)
                     .HasColumnType("DATE")
                     .HasColumnName("PLAN_DO");
