@@ -1,0 +1,25 @@
+﻿@model IndexPageViewModel
+@if (Model.Results != null)
+{
+    @foreach (var item in Model.Results)
+    {
+        <tr>
+            <td>@item.PlanStart.ToString("dd.MM.yyyy HH:mm")</td>
+            <td>@item.PlanEnd.ToString("dd.MM.yyyy HH:mm")</td>
+            <td>@item.City</td>
+            <td>@item.Street</td>
+
+            @if (Model.Filter.Type == PlnOdsType.Cancelled)
+            {
+                <td>@(item.Cancelled?.ToString("dd.MM.yyyy HH:mm") ?? "-")</td>
+            }
+            else
+            {
+                <td>@(item.Started?.ToString("dd.MM.yyyy HH:mm") ?? "-")</td>
+                <td>@(item.Finished?.ToString("dd.MM.yyyy HH:mm") ?? "-")</td>
+            }
+
+            <td>@item.Published.ToString("dd.MM.yyyy HH:mm")</td>
+        </tr>
+    }
+}

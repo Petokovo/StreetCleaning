@@ -1,0 +1,260 @@
+﻿@model IndexPageViewModel
+
+<section class="po-filter card">
+    <div class="card-body">
+
+        <form asp-action="Index" method="get" class="po-filter-form">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-2"></div>
+
+            <!-- Line 1: Od, Do, Typ -->
+            <div class="row g-3 align-items-end">
+                <div class="col-12 col-md-6 col-xl-4">
+                    <label asp-for="Filter.From" class="form-label">
+                        Od
+                        <i class="bi bi-info-circle ms-1 text-muted"
+                           data-bs-toggle="tooltip"
+                           title="Vyberte dátum začiatku vyhľadávania plánovaných odstávok"></i>
+                    </label>
+                    <input asp-for="Filter.From" class="form-control" placeholder="DD.MM.YYYY" />
+                    <span asp-validation-for="Filter.From" class="text-danger"></span>
+                </div>
+
+                <div class="col-12 col-md-6 col-xl-4">
+                    <label asp-for="Filter.To" class="form-label">
+                        Do
+                        <i class="bi bi-info-circle ms-1 text-muted"
+                           data-bs-toggle="tooltip"
+                           title="Vyberte dátum konca vyhľadávania plánovaných odstávok"></i>
+                    </label>
+                    <input asp-for="Filter.To" class="form-control" placeholder="DD.MM.YYYY" />
+                    <span asp-validation-for="Filter.To" class="text-danger"></span>
+                </div>
+
+                <div class="col-12 col-md-6 col-xl-4">
+                    <label asp-for="Filter.Type" class="form-label">
+                        Typ
+                        <i class="bi bi-info-circle ms-1 text-muted"
+                           data-bs-toggle="tooltip"
+                           title="Zvoľte, či chcete zobraziť plánované odstávky, storno alebo skutočné časy"></i>
+                    </label>
+                    <select asp-for="Filter.Type" asp-items="Html.GetEnumSelectList<PlnOdsType>()" class="form-select"></select>
+                    <span asp-validation-for="Filter.Type" class="text-danger"></span>
+                </div>
+            </div>
+
+            <!-- Line 2: EIC, Číslo odberného miesta, Obec, Ulica -->
+            <div class="row g-3 align-items-end mt-2">
+                <div class="col-12 col-md-6 col-xl-3">
+                    <label asp-for="Filter.Eic" class="form-label">
+                        EIC kód
+                        <i class="bi bi-info-circle ms-1 text-muted"
+                           data-bs-toggle="tooltip"
+                           title="16-miestny identifikátor odberného miesta"></i>
+                    </label>
+                    <input asp-for="Filter.Eic" class="form-control" />
+                    <span asp-validation-for="Filter.Eic" class="text-danger"></span>
+                </div>
+
+                <div class="col-12 col-md-6 col-xl-3">
+                    <label asp-for="Filter.ConsumptionPointNumber" class="form-label">
+                        Číslo odber. miesta
+                        <i class="bi bi-info-circle ms-1 text-muted"
+                           data-bs-toggle="tooltip"
+                           title="8-miestne číslo odberného miesta"></i>
+                    </label>
+                    <input asp-for="Filter.ConsumptionPointNumber" class="form-control" />
+                    <span asp-validation-for="Filter.ConsumptionPointNumber" class="text-danger"></span>
+                </div>
+
+                <div class="col-12 col-md-6 col-xl-3">
+                    <label asp-for="Filter.City" class="form-label">
+                        Obec
+                        <i class="bi bi-info-circle ms-1 text-muted"
+                           data-bs-toggle="tooltip"
+                           title="Zadajte názov obce alebo mesta"></i>
+                    </label>
+                    <input asp-for="Filter.City" class="form-control" />
+                    <span asp-validation-for="Filter.City" class="text-danger"></span>
+                </div>
+
+                <div class="col-12 col-md-6 col-xl-3">
+                    <label asp-for="Filter.Street" class="form-label">
+                        Ulica
+                        <i class="bi bi-info-circle ms-1 text-muted"
+                           data-bs-toggle="tooltip"
+                           title="Zadajte názov ulice, prípadne s číslom domu"></i>
+                    </label>
+                    <input asp-for="Filter.Street" class="form-control" />
+                    <span asp-validation-for="Filter.Street" class="text-danger"></span>
+                </div>
+            </div>
+
+            <button type="submit" class="mt-3 btn po-btn w-100 d-flex align-items-center justify-content-center" data-loading-text="Hľadám...">
+                <span class="btn-text">Vyhľadať</span>
+                <span class="spinner-border spinner-border-sm ms-2 d-none" role="status" aria-hidden="true"></span>
+            </button>
+        </form>
+    </div>
+</section>
+
+<div class="mt-4">
+    @if (Model.Results != null && Model.Results.Any())
+    {
+        <h3>Výsledky vyhľadávania</h3>
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered align-middle">
+                <thead>
+                    <tr>
+                        <th scope="col">Od</th>
+                        <th scope="col">Do</th>
+                        <th scope="col">Obec</th>
+                        <th scope="col">Ulica</th>
+
+                        @if (Model.Filter.Type == PlnOdsType.Cancelled)
+                        {
+                            <th scope="col">Dátum stornovania</th>
+                        }
+                        else
+                        {
+                            <th scope="col">Začiatok</th>
+                            <th scope="col">Koniec</th>
+                        }
+
+                        <th scope="col">Dátum zverejnenia</th>
+                    </tr>
+                </thead>
+                <tbody id="results-body">
+                    <partial name="_ResultTable" model="Model" />
+                </tbody>
+            </table>
+        </div>
+        @if (Model.Filter.NoMoreResults == "false")
+        {
+            <button id="loadMore"
+                    type="button"
+                    class="mt-3 btn po-btn w-100 d-flex align-items-center justify-content-center"
+                    data-loading-text="Načítavam...">
+                <span class="btn-text">Načítať ďalších 25 výsledkov</span>
+                <span class="spinner-border spinner-border-sm ms-2 d-none" role="status" aria-hidden="true"></span>
+            </button>
+        }
+    }
+    else if (Model.Filter.IsDefaultPlannedToday() || ViewData.ModelState.ErrorCount > 0)
+    {
+        // intro text for default view
+        <div class="alert alert-info mt-3">
+            <h5>Vážení zákazníci,</h5>
+            <p>
+                Táto aplikácia vám umožňuje jednoducho overiť <strong>plánovanú odstávku elektriny</strong> pre vaše odberné miesto alebo obec.
+            </p>
+            <ul>
+                <li>zobrazenie termínov plánovaných odstávok,</li>
+                <li>informácie o zrušení plánovaných odstávok,</li>
+                <li>skutočné časy priebehu už zrealizovaných odstávok.</li>
+            </ul>
+            <p>
+                Pre vyhľadanie zadajte aspoň jeden z údajov: <strong>EIC kód, číslo odberného miesta, obec alebo ulicu</strong>.
+                Následne si zvoľte typ informácie (plánované odstávky, storno alebo skutočné časy) a určite časový interval v poliach <strong>Od – Do</strong>.
+            </p>
+            <p class="mb-0">
+                Kliknutím na tlačidlo <strong>Vyhľadať</strong> sa zobrazia výsledky podľa zadaných kritérií.
+            </p>
+        </div>
+    }
+    else
+    {
+        <p>Žiadne výsledky neboli nájdené.</p>
+    }
+</div>
+
+@section Scripts
+{
+    <script>
+        (function () {
+            // Find the table body and the "Load More" button.
+            // If either is missing, stop script execution.
+            const tbody = document.getElementById('results-body');
+            const btn = document.getElementById('loadMore');
+            if (!btn || !tbody) return;
+
+            let skipAmount = Number('@Model.Filter.SkipAmount');
+            let loading = false;
+
+            // When the button is clicked, start loading the next batch.
+            btn.addEventListener('click', async () =>
+            {
+                if (loading) return;   // ignore clicks while already fetching
+                loading = true;
+
+                // UI lock
+                const spinner = btn.querySelector('.spinner-border');
+                const text = btn.querySelector('.btn-text');
+                if (spinner) spinner.classList.remove('d-none');
+                if (text) text.textContent = "Načítavam..."; // restore button text
+                btn.disabled = true;
+
+                let noMore = false;
+
+                try
+                {
+                    // Build the request URL for the controller action "/rows"
+                    // and send all current filter parameters as query strings.
+                    const url = new URL('@Url.Content("~/rows")', window.location.origin);
+                    url.searchParams.set('Filter.From', '@Model.Filter.From.ToString("yyyy-MM-dd")');
+                    url.searchParams.set('Filter.To', '@Model.Filter.To.ToString("yyyy-MM-dd")');
+                    url.searchParams.set('Filter.Type', '@Model.Filter.Type');
+                    url.searchParams.set('Filter.Eic', @Html.Raw(JsonSerializer.Serialize(Model.Filter.Eic ?? "")));
+                    url.searchParams.set('Filter.ConsumptionPointNumber', @Html.Raw(JsonSerializer.Serialize(Model.Filter.ConsumptionPointNumber ?? "")));
+                    url.searchParams.set('Filter.City', @Html.Raw(JsonSerializer.Serialize(Model.Filter.City ?? "")));
+                    url.searchParams.set('Filter.Street', @Html.Raw(JsonSerializer.Serialize(Model.Filter.Street ?? "")));
+
+                    // Pagination control: how many results to skip and take
+                    url.searchParams.set('Filter.SelectedAmount', '@Model.Filter.SelectedAmount');
+                    url.searchParams.set('Filter.SkipAmount', skipAmount + 25);
+
+                    // Send the request to the server
+                    const res = await fetch(url);
+
+                    // If the server returns "No Content" or error -> stop here
+                    if (res.status === 204)
+                    {
+                        noMore = true;
+                    }
+                    else if (res.ok)
+                    {
+                    // Read the returned HTML (partial view) and custom header
+                    const html = await res.text();
+                        noMore = ((res.headers.get('NoMoreResults') ?? '').trim().toLowerCase() === 'true');
+
+                    // Append the new rows to the end of the current table
+                    tbody.insertAdjacentHTML('beforeend', html);
+
+                    // Increase skip amount for the next page
+                    skipAmount += 25;
+                }
+                    else
+                    {
+                        // On error, allow retry by keeping noMore = false
+                        noMore = false;
+                    }
+                }
+                finally
+                {
+                    if (noMore && document.body.contains(btn))
+                    {
+                        btn.remove();
+                    }
+
+                    // reset UI
+                    if (document.body.contains(btn)) {
+                        if (spinner) spinner.classList.add('d-none');
+                        if (text) text.textContent = "Načítať ďalších 25 výsledkov";
+                        btn.disabled = false;
+                    }
+
+                    loading = false;
+                }
+            });
+        })();
+    </script>
+}
